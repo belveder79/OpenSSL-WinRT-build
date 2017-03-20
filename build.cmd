@@ -20,6 +20,7 @@ FOR %%P IN (win32,x64,arm) DO (
   call nmake -f ms\nt.mak || goto :error
   MD ..\build\libs\uwp\%%P || goto :error
   COPY out32\libeay32.lib ..\build\libs\uwp\%%P || goto :error)
+  COPY out32\ssleay32.lib ..\build\libs\uwp\%%P || goto :error)
 
 rem copy header files
 MD ..\build\include || goto :error
