@@ -19,12 +19,12 @@ FOR %%P IN (win32,x64,arm) DO (
   rem do build
   call nmake -f ms\nt.mak || goto :error
   MD ..\build\libs\uwp\%%P || goto :error
-  COPY out32\libeay32.lib ..\build\libs\uwp\%%P || goto :error)
+  COPY out32\libeay32.lib ..\build\libs\uwp\%%P || goto :error
   COPY out32\ssleay32.lib ..\build\libs\uwp\%%P || goto :error)
 
 rem copy header files
-MD ..\build\include || goto :error
-COPY inc32\openssl\*.h ..\build\include\ || goto :error
+MD ..\build\include\openssl || goto :error
+COPY inc32\openssl\*.h ..\build\include\openssl\ || goto :error
 
 echo "Setting up build for Windows 8.1.."
 perl Configure no-asm no-hw no-dso VC-WINSTORE || goto :error
