@@ -8,10 +8,25 @@ MD build || goto :error
 cd OpenSSL
 
 echo "Setting up build for Windows UWP.."
-perl Configure no-asm no-hw no-dso VC-WINUNIVERSAL || goto :error
+perl Configure no-asm no-hw no-dso --with-zlib-include=%cd%\..\zlib-install\include --with-zlib-lib=%cd%\..\zlib-install\lib\x86\zlibstatic.lib VC-WINUNIVERSAL || goto :error
 call ms\do_winuniversal.bat || goto :error
 
-FOR %%P IN (win32,x64,arm) DO (
+FOR %%P IN (win32) DO (
+  echo "Building OpenSSL as Windows10/%%P"
+  call ms\setVSvars universal10.0%%P || goto :error
+  rem clean up temporary files
+  IF EXIST tmp32 call nmake -f ms\nt.mak clean
+  rem do build
+  call nmake -f ms\nt.mak || goto :error
+  MD ..\build\libs\uwp\%%P || goto :error
+  COPY out32\libeay32.lib ..\build\libs\uwp\%%P || goto :error
+  COPY out32\ssleay32.lib ..\build\libs\uwp\%%P || goto :error)
+
+echo "Setting up build for Windows UWP.."
+perl Configure no-asm no-hw no-dso --with-zlib-include=%cd%\..\zlib-install\include --with-zlib-lib=%cd%\..\zlib-install\lib\x86_64\zlibstatic.lib VC-WINUNIVERSAL || goto :error
+call ms\do_winuniversal.bat || goto :error
+
+FOR %%P IN (x64) DO (
   echo "Building OpenSSL as Windows10/%%P"
   call ms\setVSvars universal10.0%%P || goto :error
   rem clean up temporary files
@@ -25,6 +40,8 @@ FOR %%P IN (win32,x64,arm) DO (
 rem copy header files
 MD ..\build\include\openssl || goto :error
 COPY inc32\openssl\*.h ..\build\include\openssl\ || goto :error
+
+exit /b 0
 
 echo "Setting up build for Windows 8.1.."
 perl Configure no-asm no-hw no-dso VC-WINSTORE || goto :error
