@@ -17,8 +17,13 @@ IF "%bits%"=="x64" (
   if not %ERRORLEVEL% == 0 goto Finish
 )
 
-IF "%bits%"=="x86_arm" (
+IF "%bits%"=="arm" (
   msbuild openSSL.sln /t:NT-Universal-10_0-Static-Unicode /p:Configuration=Release;Platform=ARM
+  if not %ERRORLEVEL% == 0 goto Finish
+)
+
+IF "%bits%"=="arm64" (
+  msbuild openSSL.sln /t:NT-Universal-10_0-Static-Unicode /p:Configuration=Release;Platform=ARM64
   if not %ERRORLEVEL% == 0 goto Finish
 )
 
